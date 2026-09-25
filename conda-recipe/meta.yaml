@@ -1,0 +1,49 @@
+{% set version = "0.3.0" %}
+
+package:
+  name: seqgain
+  version: {{ version }}
+
+source:
+  path: ..
+
+build:
+  number: 0
+  noarch: python
+  run_exports:
+    - {{ pin_subpackage('seqgain', max_pin="x.x") }}
+  script:
+    - {{ PYTHON }} -m build --wheel --no-isolation
+    - {{ PYTHON }} -m installer --no-compile-bytecode --prefix {{ PREFIX }} dist/seqgain-{{ version }}-py3-none-any.whl
+  entry_points:
+    - seqgain = seqgain.cli:main
+    - seqgain-demo = seqgain.cli:demo_main
+
+requirements:
+  host:
+    - python >=3.11
+    - setuptools >=77.0.3
+    - python-build
+    - python-installer
+    - wheel
+  run:
+    - python >=3.11
+    - numpy >=1.26,<3
+    - scipy >=1.12,<2
+    - pysam >=0.22,<0.25
+    - plotly >=5.24,<7
+
+test:
+  imports:
+    - seqgain.cli
+    - seqgain.bam
+  commands:
+    - seqgain --version
+    - seqgain --help
+    - seqgain-demo --help
+
+about:
+  home: https://github.com/rki-mf1/seqgain
+  license: GPL-3.0-only
+  license_file: LICENSE
+  summary: Local sequencing discovery and reference coverage scenarios

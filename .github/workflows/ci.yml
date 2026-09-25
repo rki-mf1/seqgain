@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-conda:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for merge-conflict markers
+        shell: bash {0}
+        run: |
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)'; then
+            exit 1
+          fi
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: environment.yml
+          activate-environment: seqgain
+          auto-activate-base: false
+      - name: Build and install Conda package
+        run: |
+          conda-build conda-recipe --output-folder ./conda-channel --override-channels -c conda-forge -c bioconda
+          conda install --yes --override-channels -c "file://$GITHUB_WORKSPACE/conda-channel" -c conda-forge -c bioconda seqgain
+      - name: Run tests and CLI checks
+        run: |
+          node --version
+          python -m pytest -q
+          seqgain --version
+          seqgain-demo --outdir ci-demo-input
+          seqgain --bam ci-demo-input/sample.bam --targets ci-demo-input/targets.tsv --outdir ci-demo-report
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seqgain-demo-${{ github.sha }}
+          path: |
+            ci-demo-report/report.html
+            ci-demo-report/results.json
+            ci-demo-report/curves.tsv
+          retention-days: 30
