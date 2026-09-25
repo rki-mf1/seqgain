@@ -7,8 +7,7 @@ package:
 
 source:
   url: https://github.com/rki-mf1/seqgain/archive/refs/tags/v{{ version }}.tar.gz
-  # Replace with the SHA-256 of the published GitHub release archive before submission.
-  sha256: REPLACE_WITH_RELEASE_ARCHIVE_SHA256
+  sha256: d9cc92b9b1166331a5eb7a961b35fcf0cd331d6c9de107ecf01540f4dc6a7db2
 
 build:
   number: 0
