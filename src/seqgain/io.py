@@ -38,7 +38,7 @@ def fastq(path):
                 break
             index += 1
             seq, plus, qual = [handle.readline().rstrip("\r\n") for _ in range(3)]
-            if not header.startswith("@") or not plus.startswith("+") or not seq or len(seq) != len(qual):
+            if not header.startswith("@") or not header[1:].strip() or not plus.startswith("+") or not seq or len(seq) != len(qual):
                 raise ValueError(f"Malformed four-line FASTQ record {index} in {path}")
             if any(ord(c) < 33 or ord(c) > 126 for c in qual):
                 raise ValueError(f"Invalid Phred+33 quality at record {index} in {path}")

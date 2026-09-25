@@ -65,6 +65,8 @@ def validate(a):
         raise ValueError("--targets requires --bam")
     if a.explore_filters and not a.bam:
         raise ValueError("--explore-filters requires --bam")
+    if a.kmer_source == "none" and not a.bam:
+        raise ValueError("--kmer-source none requires --bam for reference coverage")
     if a.kmer_source == "bam" and not a.bam or a.kmer_source == "fastq" and not a.reads1:
         raise ValueError("Selected --kmer-source requires the corresponding input")
     a.fractions = sorted(set(float(x) for x in a.fractions.split(",")))

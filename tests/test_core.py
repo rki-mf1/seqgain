@@ -124,6 +124,9 @@ def test_fastq_pair_validation(tmp_path):
     a.write_text("@x\nAAA\n+\nII\n")
     with pytest.raises(ValueError,match="Malformed"):
         list(fragments(a))
+    a.write_text("@   \nAAA\n+\nIII\n")
+    with pytest.raises(ValueError,match="Malformed"):
+        list(fragments(a))
 
 
 def test_kmer_exact_incidence_and_nested_subsampling(tmp_path):
@@ -307,7 +310,7 @@ def test_end_to_end_and_html_escaping(tmp_path):
     check_report_script(out/'report.html')
 
 
-@pytest.mark.parametrize('extra', [['--fractions','.1,.2,.3'],['--replicates','0'],['--baseq','100'],['--explore-filters']])
+@pytest.mark.parametrize('extra', [['--fractions','.1,.2,.3'],['--replicates','0'],['--baseq','100'],['--explore-filters'],['--kmer-source','none']])
 def test_cli_validation(tmp_path,extra):
     a=tmp_path/'a.fq';fq(a,[('x','AAAA')])
     with pytest.raises(SystemExit) as exc:

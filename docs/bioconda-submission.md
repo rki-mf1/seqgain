@@ -1,19 +1,19 @@
-# Bioconda submission for SeqGain 0.3.0
+# Bioconda submission for SeqGain
 
-The upstream release and the Bioconda recipe are separate: a Git tag supplies the source, while a pull request to [`bioconda-recipes`](https://github.com/bioconda/bioconda-recipes) publishes the package after review. The submission-ready recipe is at [`bioconda-recipe/meta.yaml`](../bioconda-recipe/meta.yaml).
+The upstream release and the Bioconda recipe are separate: an immutable Git tag supplies the source, while a pull request to [`bioconda-recipes`](https://github.com/bioconda/bioconda-recipes) submits the package for review. Publication happens only after Bioconda accepts and builds the recipe.
 
-1. Keep the public `v0.3.0` tag at its release commit. Do not move it after submission.
-2. The recipe checksum was calculated from the public archive at `https://github.com/rki-mf1/seqgain/-/archive/v0.3.0/seqgain-v0.3.0.tar.gz`. To verify it, run:
+1. Run the application tests and Conda package checks, then publish the release tag. SeqGain's first GitHub release is `v0.3.1`; the historical `v0.3.0` tag belongs to the former SeqScope project and must not be reused.
+2. Download the tagged GitHub archive and calculate its checksum:
 
    ```bash
-   curl --fail --location --output seqgain-v0.3.0.tar.gz \
-     https://github.com/rki-mf1/seqgain/-/archive/v0.3.0/seqgain-v0.3.0.tar.gz
-   shasum -a 256 seqgain-v0.3.0.tar.gz
+   curl --fail --location --output seqgain-v0.3.1.tar.gz \
+     https://github.com/rki-mf1/seqgain/archive/refs/tags/v0.3.1.tar.gz
+   shasum -a 256 seqgain-v0.3.1.tar.gz
    ```
 
-   Expected SHA-256: `fb8f3167f3cf33060ef878588a55839a308f81124510e71ffa5d03aa605f5c49`. Check that the download is the intended source archive, not an error page.
-3. Sync your GitHub fork of `bioconda/bioconda-recipes`, create a branch from its current default branch, and copy `bioconda-recipe/meta.yaml` to `recipes/seqgain/meta.yaml` in that fork. The recipe maintainer is `simonhtausch`.
-4. Run Bioconda lint/build tests if available, then open a pull request. Bioconda's CI will build and test the recipe; address any review or platform-specific failures there. The upstream GitLab CI checks the application but does not replace Bioconda's recipe checks.
-5. After the PR is merged and the package is available, test a fresh installation on Bioconda, then update the README to remove its pre-publication warning.
+3. Set that SHA-256 in [`bioconda-recipe/meta.yaml`](../bioconda-recipe/meta.yaml). This checksum update necessarily follows the source tag; do not move the tag to include its own archive checksum.
+4. Create a branch from the current default branch of `bioconda/bioconda-recipes` and copy the completed recipe to `recipes/seqgain/meta.yaml`. The recipe maintainer is `simonhtausch`.
+5. Run the recipe build and Bioconda lint checks, then open a pull request. GitHub Actions checks the upstream application; Bioconda's CI additionally checks its packaging requirements and supported build platforms.
+6. After acceptance and package publication, test a fresh Bioconda installation before removing the README's pre-publication warning.
 
-Bioconda expects a stable source URL with a checksum, an appropriate license file, a build number of 0 for a new version, `noarch: python` for pure Python packages, command-line tests, and a `run_exports` pin. For a `0.x` version, Bioconda recommends a minor-version pin (`max_pin="x.x"`). The recipe follows those conventions.
+The recipe uses a tagged source archive, SHA-256 verification, build number 0, `noarch: python`, the GPL-3.0-only license, import and CLI checks, and a minor-version `run_exports` pin for this `0.x` package. See the [Bioconda recipe guidelines](https://bioconda.github.io/contributor/guidelines.html).
